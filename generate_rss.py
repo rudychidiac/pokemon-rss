@@ -1,7 +1,7 @@
 import requests, random
 import xml.etree.ElementTree as ET
 
-# Get all Pokémon (change limit if needed — 1025 covers all)
+# Get full list of Pokémon
 url = "https://pokeapi.co/api/v2/pokemon?limit=1025"
 resp = requests.get(url).json()
 
@@ -10,16 +10,21 @@ random_pokemon = random.choice(resp["results"])
 data = requests.get(random_pokemon["url"]).json()
 
 name = data["name"].capitalize()
-sprite = data["sprites"]["front_default"]
+
+# Use crisp sprite (PokeAPI pixel sprite repo has consistent IDs)
+id = data["id"]
+sprite = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png"
+
+# Types (just plain text, e.g. "Grass, Poison")
 types = [t["type"]["name"] for t in data["types"]]
 type_str = ", ".join(types).title()
 
-# Build RSS feed
+# Build RSS
 rss = ET.Element("rss", version="2.0")
 channel = ET.SubElement(rss, "channel")
-ET.SubElement(channel, "title").text = "Pokémon of the Day"
+ET.SubElement(channel, "title").text = "Pokémon of the Hour"
 ET.SubElement(channel, "link").text = "https://pokeapi.co/"
-ET.SubElement(channel, "description").text = "One random Pokémon every 6 hours"
+ET.SubElement(channel, "description").text = "One random Pokémon every hour"
 
 item = ET.SubElement(channel, "item")
 ET.SubElement(item, "title").text = name
