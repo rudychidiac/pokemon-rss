@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # allow pushing to gh-pages
+  contents: write
 
 jobs:
   build:
@@ -23,10 +23,12 @@ jobs:
         run: pip install requests
 
       - name: Run script
-        run: python generate_rss.py > feed.xml
+        run: |
+          mkdir public
+          python generate_rss.py > public/feed.xml
 
       - name: Upload to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: ./public
