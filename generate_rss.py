@@ -24,10 +24,7 @@ ET.SubElement(channel, "description").text = "One random Pokémon every 6 hours"
 item = ET.SubElement(channel, "item")
 ET.SubElement(item, "title").text = name
 ET.SubElement(item, "link").text = sprite
-ET.SubElement(item, "description").text = (
-    f'{name} – Type: {type_str}<br>'
-    f'<img src="{sprite}" alt="{name}"/>'
-)
+ET.SubElement(item, "description").text = type_str
 
 # Output XML
 rss_xml = ET.tostring(rss, encoding="unicode")
