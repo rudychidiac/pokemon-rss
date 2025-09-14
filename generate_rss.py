@@ -1,7 +1,5 @@
-import requests, random, base64
+import requests, random
 import xml.etree.ElementTree as ET
-from PIL import Image
-from io import BytesIO
 
 # Get full list of Pokémon
 url = "https://pokeapi.co/api/v2/pokemon?limit=1025"
@@ -13,23 +11,10 @@ data = requests.get(random_pokemon["url"]).json()
 
 name = data["name"].capitalize()
 
-# Download the small default sprite
-id = data["id"]
-sprite_url = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png"
-sprite_resp = requests.get(sprite_url)
-img = Image.open(BytesIO(sprite_resp.content))
+# Use Scarlet/Violet high-quality artwork
+sprite = data["sprites"]["other"]["official-artwork"]["front_default"]
 
-# Upscale 4x with nearest-neighbour to keep pixels crisp
-scale = 4
-img = img.resize((img.width * scale, img.height * scale), Image.NEAREST)
-
-# Encode as base64 so it’s embedded directly in the XML
-buffered = BytesIO()
-img.save(buffered, format="PNG")
-sprite_base64 = base64.b64encode(buffered.getvalue()).decode()
-sprite_html = f'<img src="data:image/png;base64,{sprite_base64}" alt="{name}"/>'
-
-# Types
+# Types (plain text)
 types = [t["type"]["name"] for t in data["types"]]
 type_str = ", ".join(types).title()
 
@@ -42,8 +27,8 @@ ET.SubElement(channel, "description").text = "One random Pokémon every hour"
 
 item = ET.SubElement(channel, "item")
 ET.SubElement(item, "title").text = name
+ET.SubElement(item, "link").text = sprite
 ET.SubElement(item, "description").text = type_str
-ET.SubElement(item, "link").text = sprite_html  # embed the upscaled image
 
 # Output XML
 rss_xml = ET.tostring(rss, encoding="unicode")
