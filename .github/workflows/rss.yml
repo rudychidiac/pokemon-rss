@@ -19,8 +19,8 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install requests
-        run: pip install requests
+      - name: Install libraries
+  run: pip install requests pillow
 
       - name: Run script
         run: |
