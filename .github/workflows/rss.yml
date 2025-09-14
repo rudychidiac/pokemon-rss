@@ -2,7 +2,7 @@ name: Build RSS
 
 on:
   schedule:
-    - cron: "0 * * * *"  # runs every 1 hour
+    - cron: "0 * * * *"  # runs every hour
   workflow_dispatch:
 
 permissions:
@@ -20,7 +20,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install libraries
-  run: pip install requests pillow
+        run: pip install requests pillow
 
       - name: Run script
         run: |
