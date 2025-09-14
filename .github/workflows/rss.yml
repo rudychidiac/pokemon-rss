@@ -5,19 +5,26 @@ on:
     - cron: "0 */12 * * *"  # runs every 12 hours
   workflow_dispatch:
 
+permissions:
+  contents: write   # allow pushing to gh-pages
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
+
       - name: Install requests
         run: pip install requests
+
       - name: Run script
         run: python generate_rss.py > feed.xml
+
       - name: Upload to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
