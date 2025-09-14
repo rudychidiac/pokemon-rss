@@ -2,7 +2,7 @@ name: Build RSS
 
 on:
   schedule:
-    - cron: "0 */6 * * *"  # runs every 6 hours
+    - cron: "0 * * * *"  # runs every 1 hour
   workflow_dispatch:
 
 permissions:
