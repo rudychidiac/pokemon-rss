@@ -1,31 +1,33 @@
-import requests
+import requests, random
 import xml.etree.ElementTree as ET
 
-# Get Pokémon (adjust limit if you want more)
-url = "https://pokeapi.co/api/v2/pokemon?limit=50"
+# Get all Pokémon (adjust as you like)
+url = "https://pokeapi.co/api/v2/pokemon?limit=1025"
 resp = requests.get(url).json()
+
+# Pick one random Pokémon
+random_pokemon = random.choice(resp["results"])
+data = requests.get(random_pokemon["url"]).json()
+
+name = data["name"].capitalize()
+sprite = data["sprites"]["front_default"]
+types = [t["type"]["name"] for t in data["types"]]
+type_str = ", ".join(types).title()
 
 rss = ET.Element("rss", version="2.0")
 channel = ET.SubElement(rss, "channel")
-ET.SubElement(channel, "title").text = "Pokémon Sprites & Types"
+ET.SubElement(channel, "title").text = "Pokémon of the Day"
 ET.SubElement(channel, "link").text = "https://pokeapi.co/"
-ET.SubElement(channel, "description").text = "Pokémon names with their sprites and types"
+ET.SubElement(channel, "description").text = "One random Pokémon every day"
 
-for p in resp["results"]:
-    data = requests.get(p["url"]).json()
-    name = data["name"].capitalize()
-    sprite = data["sprites"]["front_default"]
-    types = [t["type"]["name"] for t in data["types"]]
-    type_str = ", ".join(types).title()
+item = ET.SubElement(channel, "item")
+ET.SubElement(item, "title").text = name
+ET.SubElement(item, "link").text = sprite
+ET.SubElement(item, "description").text = (
+    f'{name} – Type: {type_str}<br>'
+    f'<img src="{sprite}" alt="{name}"/>'
+)
 
-    item = ET.SubElement(channel, "item")
-    ET.SubElement(item, "title").text = name
-    ET.SubElement(item, "link").text = sprite
-    ET.SubElement(item, "description").text = (
-        f'{name} – Type: {type_str}<br>'
-        f'<img src="{sprite}" alt="{name}"/>'
-    )
-
-# Print the XML (this is what will become feed.xml)
+# Output XML
 rss_xml = ET.tostring(rss, encoding="unicode")
 print(rss_xml)
