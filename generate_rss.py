@@ -50,8 +50,12 @@ ET.SubElement(channel, "description").text = "One random Pokémon every hour"
 
 item = ET.SubElement(channel, "item")
 ET.SubElement(item, "title").text = name
-ET.SubElement(item, "link").text = sprite
 ET.SubElement(item, "description").text = type_str
+
+# Main Pokémon image as enclosure
+enclosure = ET.SubElement(item, "enclosure")
+enclosure.set("url", sprite)
+enclosure.set("type", "image/png")
 
 # Output XML
 rss_xml = ET.tostring(rss, encoding="unicode")
