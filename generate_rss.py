@@ -1,5 +1,3 @@
-Rss bakup
-
 import requests, random
 import xml.etree.ElementTree as ET
 
